@@ -25,10 +25,14 @@ THE SOFTWARE.
 
 typedef struct game_s game_t;
 
+
 struct game_s {
+	int state;
 	/* Game Data */
 
 
 	/* Meta Data */
 
 };
+
+extern game_t game;

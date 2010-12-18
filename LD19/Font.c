@@ -110,20 +110,19 @@ float quad[] = {
 
 extern int picked;
 
-void font_drawText(font_t *font, const char *text) {
+void font_drawText(font_t *font, const char *text, int x, int y) {
 	unsigned int i, len;
 
 	glBindTexture(GL_TEXTURE_2D, font->texname);
 	glPushMatrix();
 	glLoadIdentity();
+	glTranslatef((float)x, (float)-y, 0);
 	glScalef((float)font->ch_width, (float)font->ch_height, 1.0f);
-
+	
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_COLOR_ARRAY);
 
 	glVertexPointer(2, GL_FLOAT, 0, quad);
-	
 	for(i = 0, len = strlen(text); i < len; ++i) {
 		glTranslatef(0.5f, 0, 0);
 		glTexCoordPointer(2, GL_FLOAT, 0, font->texcoords + (text[i] - font->start) * 8);

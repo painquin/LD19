@@ -26,6 +26,7 @@ THE SOFTWARE.
 #include <gl/glfw.h>
 
 #include "LD19.h"
+#include "Game.h"
 #include "Tech.h"
 #include "Font.h"
 
@@ -33,6 +34,7 @@ THE SOFTWARE.
 
 const char* hello = "Hello, World!";
 
+game_t game;
 
 
 font_t *font16 = NULL;
@@ -91,7 +93,11 @@ int main(int argc, char* argv[])
 		glLoadIdentity();
 
 		imgui_prepare();
-		imgui_button(1, -100, 64, GEN_ID);
+		
+		if (imgui_text(font16, hello, 0, 0, GEN_ID))
+		{
+			hello = "BLAHR";
+		}
 
 		if (imgui_button(1, 0, 64, GEN_ID))
 		{
@@ -103,7 +109,7 @@ int main(int argc, char* argv[])
 			hello = "Doit";
 		}
 
-		font_drawText(font16, hello);
+		//font_drawText(font16, hello);
 
 		imgui_finish();
 

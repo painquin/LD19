@@ -41,6 +41,6 @@ struct font_s {
 External Functions
 */
 font_t* font_load(const char *path, int flags, char start, char end, int width);
-void font_drawText(font_t *font, const char *text);
+void font_drawText(font_t *font, const char *text, int x, int y);
 void font_free(font_t *font);
 

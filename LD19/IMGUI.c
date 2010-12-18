@@ -24,7 +24,7 @@ THE SOFTWARE.
 #include <gl/glfw.h>
 
 #include "IMGUI.h"
-
+#include "Font.h"
 
 static int mousedown;
 static int mousex, mousey;
@@ -46,24 +46,15 @@ static float square_quad[] =
 static float color_idle[] =
 {
 	0.8f, 0.8f, 0.8f,
-	0.8f, 0.8f, 0.8f,
-	0.8f, 0.8f, 0.8f,
-	0.8f, 0.8f, 0.8f,
 };
 
 static float color_hot[] =
 {
 	1.0f, 1.0f, 1.0f,
-	1.0f, 1.0f, 1.0f,
-	1.0f, 1.0f, 1.0f,
-	1.0f, 1.0f, 1.0f,
 };
 
 static float color_down[] =
 {
-	0.9f, 0.9f, 0.9f,
-	0.9f, 0.9f, 0.9f,
-	0.9f, 0.9f, 0.9f,
 	0.9f, 0.9f, 0.9f,
 };
 
@@ -166,7 +157,6 @@ int imgui_button(int tile, int x, int y, int _id)
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	glEnableClientState(GL_COLOR_ARRAY);
 	glVertexPointer(2, GL_FLOAT, 0, square_quad);
 
 	if (regionhit(x, y, x + 64, y + 64))
@@ -182,16 +172,16 @@ int imgui_button(int tile, int x, int y, int _id)
 	{
 		if (activeitem == _id)
 		{
-			glColorPointer(3, GL_FLOAT, 0, color_down);
+			glColor3fv(color_down);
 		}
 		else
 		{
-			glColorPointer(3, GL_FLOAT, 0, color_hot);
+			glColor3fv(color_hot);
 		}
 	}
 	else
 	{
-		glColorPointer(3, GL_FLOAT, 0, color_idle);
+		glColor3fv(color_idle);
 	}
 
 	glDisable(GL_TEXTURE_2D);
@@ -199,7 +189,7 @@ int imgui_button(int tile, int x, int y, int _id)
 	glEnable(GL_TEXTURE_2D);
 
 	glColor3f(1,1,1);
-	glDisableClientState(GL_COLOR_ARRAY);
+
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
@@ -216,3 +206,43 @@ int imgui_button(int tile, int x, int y, int _id)
 	return 0;
 }
 
+int imgui_text(font_t *font, const char *text, int x, int y, int _id)
+{
+	int len = strlen(text);
+	
+	if (regionhit(x, y, x + font->ch_width * len, y + font->ch_height))
+	{
+		hotitem = _id;
+		if (activeitem == 0 && mousedown != 0)
+		{
+			activeitem = _id;
+		}
+	}
+
+	if (hotitem == _id)
+	{
+		if (activeitem == _id)
+		{
+			glColor3fv(color_down);
+		}
+		else
+		{
+			glColor3fv(color_hot);
+		}
+	}
+	else
+	{
+		glColor3fv(color_idle);
+	}
+
+	
+	font_drawText(font, text, x, y);
+	glColor3f(1,1,1);
+
+	if (mousedown == 0 &&
+		hotitem == _id &&
+		activeitem == _id)
+		return 1;
+
+	return 0;
+}
