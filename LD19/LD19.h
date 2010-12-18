@@ -25,4 +25,3 @@ THE SOFTWARE.
 #define TexturePath "tex/"
 
 #define FontPath TexturePath "font/"
-#define TechPath TexturePath "tech/"

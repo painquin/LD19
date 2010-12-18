@@ -115,22 +115,16 @@ void font_drawText(font_t *font, const char *text) {
 
 	glBindTexture(GL_TEXTURE_2D, font->texname);
 	glPushMatrix();
-	
+	glLoadIdentity();
 	glScalef((float)font->ch_width, (float)font->ch_height, 1.0f);
 
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	glEnableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
 
 	glVertexPointer(2, GL_FLOAT, 0, quad);
 	
-	glPushName(0);
 	for(i = 0, len = strlen(text); i < len; ++i) {
-		glLoadName(i);
-		if (picked == i) {
-			glColor3f(1.0f, 1.0f, 0.0f);
-		} else {
-			glColor3f(1.0f, 1.0f, 1.0f);
-		}
 		glTranslatef(0.5f, 0, 0);
 		glTexCoordPointer(2, GL_FLOAT, 0, font->texcoords + (text[i] - font->start) * 8);
 		glDrawArrays(GL_QUADS, 0, 4);

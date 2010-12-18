@@ -24,6 +24,15 @@
     <ClCompile Include="Font.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Tech.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Textures.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IMGUI.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tech.h">
@@ -36,6 +45,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LD19.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

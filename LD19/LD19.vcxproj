@@ -79,11 +79,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Font.c" />
+    <ClCompile Include="IMGUI.c" />
     <ClCompile Include="LD19.c" />
+    <ClCompile Include="Tech.c" />
+    <ClCompile Include="Textures.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Font.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="IMGUI.h" />
     <ClInclude Include="LD19.h" />
     <ClInclude Include="Tech.h" />
   </ItemGroup>

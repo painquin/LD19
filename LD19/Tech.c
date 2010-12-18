@@ -19,30 +19,39 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-#pragma once
+
+#include <Windows.h>
+#include <gl/GL.h>
+#include <gl/glfw.h>
+
+#include "LD19.h"
+#include "Tech.h"
 
 
-typedef enum {
-	Tech_None = 0,
-	Tech_Fire = 1,
 
-	Tech_Mining,
-	Tech_Hunting,
-	Tech_Farming,
-
-	Tech_MAX,
-} tech_id_t;
-
-typedef struct tech_s tech_t;
-
-struct tech_s {
-	char *name;
-	char *description;
-
-	int id;
-
-	int prereq_count;
-	int *prereqs;
+tech_t TechTree[] =
+{
+	{ "NONE", "Untech", Tech_None, 0, 0 },
+	{ "Fire",    "Fire is the key to advancement. Get those monkeys moving!", Tech_Fire, 0, 0 },
+	{ "Mining",  "Cut up rocks.", Tech_Mining, 1, 0 },
+	{ "Hunting", "Cut up animals.", Tech_Hunting, 1, 0 },
+	{ "Farming", "Cut up plants.", Tech_Farming, 1, 0 }
 };
 
-void initialize_techs();
+void init_single_tech(int id)
+{
+	TechTree[id].prereqs = (int *)calloc(TechTree[id].prereq_count, sizeof(int));
+}
+
+void initialize_techs()
+{
+	int i;
+	for(i = Tech_Fire; i < Tech_MAX; ++i) {
+		init_single_tech(i);
+	}
+
+	TechTree[Tech_Mining].prereqs[0] = Tech_Fire;
+	TechTree[Tech_Hunting].prereqs[0] = Tech_Fire;
+	TechTree[Tech_Farming].prereqs[0] = Tech_Fire;
+}
+

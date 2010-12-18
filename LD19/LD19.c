@@ -29,6 +29,8 @@ THE SOFTWARE.
 #include "Tech.h"
 #include "Font.h"
 
+#include "IMGUI.h"
+
 const char* hello = "Hello, World!";
 
 
@@ -36,6 +38,7 @@ const char* hello = "Hello, World!";
 font_t *font16 = NULL;
 
 int gl_Width, gl_Height;
+
 void GLResize(int w, int h) {
 
 	if (h == 0) h = 1;
@@ -59,10 +62,7 @@ int picked = -1;
 
 int main(int argc, char* argv[])
 {
-	int running = 1, hits;
-	GLuint selbuf[64];
-	GLint viewport[4];
-	int mouseX, mouseY;
+	int running = 1;
 
 	if (!glfwInit()) {
 		return -1;
@@ -76,10 +76,12 @@ int main(int argc, char* argv[])
 	glfwSetWindowSizeCallback(GLResize);
 
 	font16 = font_load(FontPath "font_22.tga", 0, ' ', '~', 32);
+	imgui_init(TexturePath "tech/tech_tiles.tga", 2, 2);
 
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
 	while(running)
 	{
@@ -88,33 +90,22 @@ int main(int argc, char* argv[])
 		glClear(GL_COLOR_BUFFER_BIT);
 		glLoadIdentity();
 
-		glSelectBuffer(64, selbuf);
-		glRenderMode(GL_SELECT);
-		picked = -1;
-		glMatrixMode(GL_PROJECTION);
-		glPushMatrix();
-		glLoadIdentity();
-		glGetIntegerv(GL_VIEWPORT, viewport);
-		glfwGetMousePos(&mouseX, &mouseY);
-		gluPickMatrix(mouseX, viewport[3]-mouseY, 5, 5, viewport);
-		gluOrtho2D(-gl_Width / 2, gl_Width / 2, -gl_Height / 2, gl_Height / 2);
-		glMatrixMode(GL_MODELVIEW);
-		glInitNames();
-		font_drawText(font16, "Hello, World!");
-		hits = glRenderMode(GL_RENDER);
-		if (hits != 0) {
-			hits = selbuf[0];
-			if (hits > 0) {
-				picked = selbuf[3];
-			}
+		imgui_prepare();
+		imgui_button(1, -100, 64, GEN_ID);
+
+		if (imgui_button(1, 0, 64, GEN_ID))
+		{
+			hello = "Click!";
 		}
-		glMatrixMode(GL_PROJECTION);
-		glPushMatrix();
-		glLoadIdentity();
-		gluOrtho2D(-gl_Width / 2, gl_Width / 2, -gl_Height / 2, gl_Height / 2);
-		glMatrixMode(GL_MODELVIEW);
-		font_drawText(font16, "Hello, World!");
-		
+
+		if (imgui_button(1, 65, 64, GEN_ID))
+		{
+			hello = "Doit";
+		}
+
+		font_drawText(font16, hello);
+
+		imgui_finish();
 
 		glfwSwapBuffers();
 

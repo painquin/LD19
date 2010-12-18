@@ -19,30 +19,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 #pragma once
 
+// thanks to Sol for this reference.
 
-typedef enum {
-	Tech_None = 0,
-	Tech_Fire = 1,
+#ifdef IMGUI_SRC_ID
+#define GEN_ID ((IMGUI_SRC_ID) + (__LINE__))
+#else
+#define GEN_ID (__LINE__)
+#endif
 
-	Tech_Mining,
-	Tech_Hunting,
-	Tech_Farming,
+void imgui_init(char *tilepath, int max_tiles, int width);
+void imgui_prepare();
+void imgui_finish();
 
-	Tech_MAX,
-} tech_id_t;
-
-typedef struct tech_s tech_t;
-
-struct tech_s {
-	char *name;
-	char *description;
-
-	int id;
-
-	int prereq_count;
-	int *prereqs;
-};
-
-void initialize_techs();
+int imgui_button(int tile, int x, int y, int _id);
+int imgui_text(const char *text, int x, int y, int _id);

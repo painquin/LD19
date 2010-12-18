@@ -19,30 +19,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-#pragma once
+
+#include "LD19.h"
 
 
-typedef enum {
-	Tech_None = 0,
-	Tech_Fire = 1,
-
-	Tech_Mining,
-	Tech_Hunting,
-	Tech_Farming,
-
-	Tech_MAX,
-} tech_id_t;
-
-typedef struct tech_s tech_t;
-
-struct tech_s {
-	char *name;
-	char *description;
-
-	int id;
-
-	int prereq_count;
-	int *prereqs;
-};
-
-void initialize_techs();
