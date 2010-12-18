@@ -78,6 +78,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Font.c" />
     <ClCompile Include="LD19.c" />
   </ItemGroup>
   <ItemGroup>

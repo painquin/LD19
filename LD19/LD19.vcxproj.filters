@@ -21,6 +21,9 @@
     <ClCompile Include="LD19.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Font.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tech.h">
