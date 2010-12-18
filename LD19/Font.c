@@ -21,7 +21,7 @@ THE SOFTWARE.
 */
 #include <Windows.h>
 #include <malloc.h>
-#include <gl\GL.h>
+#include <gl/GL.h>
 #include <gl/glfw.h>
 
 #include "Font.h"
@@ -107,7 +107,8 @@ float quad[] = {
 	0.5, -1,
 	0.5, 0
 };
-extern int picked = 0;
+
+extern int picked;
 
 void font_drawText(font_t *font, const char *text) {
 	unsigned int i, len;
@@ -121,8 +122,15 @@ void font_drawText(font_t *font, const char *text) {
 	glEnableClientState(GL_VERTEX_ARRAY);
 
 	glVertexPointer(2, GL_FLOAT, 0, quad);
-
+	
+	glPushName(0);
 	for(i = 0, len = strlen(text); i < len; ++i) {
+		glLoadName(i);
+		if (picked == i) {
+			glColor3f(1.0f, 1.0f, 0.0f);
+		} else {
+			glColor3f(1.0f, 1.0f, 1.0f);
+		}
 		glTranslatef(0.5f, 0, 0);
 		glTexCoordPointer(2, GL_FLOAT, 0, font->texcoords + (text[i] - font->start) * 8);
 		glDrawArrays(GL_QUADS, 0, 4);

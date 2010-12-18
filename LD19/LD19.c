@@ -25,16 +25,23 @@ THE SOFTWARE.
 #include <gl/glfw.h>
 #include <gl/glfw.h>
 
+#include "LD19.h"
 #include "Tech.h"
 #include "Font.h"
 
 const char* hello = "Hello, World!";
-const char 
+
+
+
 font_t *font16 = NULL;
 
+int gl_Width, gl_Height;
 void GLResize(int w, int h) {
 
 	if (h == 0) h = 1;
+
+	gl_Width = w;
+	gl_Height = h;
 
 	glViewport(0, 0, w, h);
 
@@ -48,12 +55,14 @@ void GLResize(int w, int h) {
 	glLoadIdentity();
 }
 
-int picked;
+int picked = -1;
 
 int main(int argc, char* argv[])
 {
-	unsigned int i;
-	int running = 1;
+	int running = 1, hits;
+	GLuint selbuf[64];
+	GLint viewport[4];
+	int mouseX, mouseY;
 
 	if (!glfwInit()) {
 		return -1;
@@ -66,18 +75,44 @@ int main(int argc, char* argv[])
 
 	glfwSetWindowSizeCallback(GLResize);
 
-	font16 = font_load("font_22.tga", 0, ' ', '~', 32);
+	font16 = font_load(FontPath "font_22.tga", 0, ' ', '~', 32);
 
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-
 	while(running)
 	{
+
+
 		glClear(GL_COLOR_BUFFER_BIT);
 		glLoadIdentity();
 
+		glSelectBuffer(64, selbuf);
+		glRenderMode(GL_SELECT);
+		picked = -1;
+		glMatrixMode(GL_PROJECTION);
+		glPushMatrix();
+		glLoadIdentity();
+		glGetIntegerv(GL_VIEWPORT, viewport);
+		glfwGetMousePos(&mouseX, &mouseY);
+		gluPickMatrix(mouseX, viewport[3]-mouseY, 5, 5, viewport);
+		gluOrtho2D(-gl_Width / 2, gl_Width / 2, -gl_Height / 2, gl_Height / 2);
+		glMatrixMode(GL_MODELVIEW);
+		glInitNames();
+		font_drawText(font16, "Hello, World!");
+		hits = glRenderMode(GL_RENDER);
+		if (hits != 0) {
+			hits = selbuf[0];
+			if (hits > 0) {
+				picked = selbuf[3];
+			}
+		}
+		glMatrixMode(GL_PROJECTION);
+		glPushMatrix();
+		glLoadIdentity();
+		gluOrtho2D(-gl_Width / 2, gl_Width / 2, -gl_Height / 2, gl_Height / 2);
+		glMatrixMode(GL_MODELVIEW);
 		font_drawText(font16, "Hello, World!");
 		
 

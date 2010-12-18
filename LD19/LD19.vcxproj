@@ -84,6 +84,7 @@
   <ItemGroup>
     <ClInclude Include="Font.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="LD19.h" />
     <ClInclude Include="Tech.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
