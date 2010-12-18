@@ -37,7 +37,7 @@ const char* hello = "Hello, World!";
 game_t game;
 
 
-font_t *font16 = NULL;
+font_t *font12, *font16, *font22, *font54;
 
 int gl_Width, gl_Height;
 
@@ -62,6 +62,26 @@ void GLResize(int w, int h) {
 
 int picked = -1;
 
+void DrawMenu() {
+	font_drawTextc(font54, "City State: Inspired Destiny", -50, -280);
+	if (imgui_text(font22, "Begin", -200, -200, GEN_ID))
+	{
+		// todo: begin game
+	}
+
+	if (imgui_text(font22, "About", -200, -140, GEN_ID))
+	{
+		// todo: display about
+	}
+
+	if (imgui_text(font22, "Exit", -200, -80, GEN_ID))
+	{
+		glfwTerminate();
+		exit(0);
+	}
+
+}
+
 int main(int argc, char* argv[])
 {
 	int running = 1;
@@ -70,20 +90,23 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
-	if (!glfwOpenWindow(800, 600, 8, 8, 8, 8, 0, 0, GLFW_WINDOW)) {
+	if (!glfwOpenWindow(960, 720, 8, 8, 8, 8, 0, 0, GLFW_WINDOW)) {
 		glfwTerminate();
 		return -1;
 	}
 
 	glfwSetWindowSizeCallback(GLResize);
 
-	font16 = font_load(FontPath "font_22.tga", 0, ' ', '~', 32);
-	imgui_init(TexturePath "tech/tech_tiles.tga", 2, 2);
+	font12 = font_load(FontPath "font_12.tga", 0, ' ', '~', 32);
+	font16 = font_load(FontPath "font_16.tga", 0, ' ', '~', 32);
+	font22 = font_load(FontPath "font_22.tga", 0, ' ', '~', 32);
+	font54 = font_load(FontPath "font_54.tga", 0, ' ', '~', 32);
+
+	imgui_init(TexturePath "tech/tech_tiles.tga", 5, 8);
 
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
 	while(running)
 	{
@@ -94,22 +117,7 @@ int main(int argc, char* argv[])
 
 		imgui_prepare();
 		
-		if (imgui_text(font16, hello, 0, 0, GEN_ID))
-		{
-			hello = "BLAHR";
-		}
-
-		if (imgui_button(1, 0, 64, GEN_ID))
-		{
-			hello = "Click!";
-		}
-
-		if (imgui_button(1, 65, 64, GEN_ID))
-		{
-			hello = "Doit";
-		}
-
-		//font_drawText(font16, hello);
+		DrawMenu();
 
 		imgui_finish();
 

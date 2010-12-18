@@ -104,17 +104,21 @@ void font_free(font_t *font) {
 float quad[] = {
 	0, 0,
 	0, -1,
-	0.5, -1,
-	0.5, 0
+	1, -1,
+	1, 0
 };
 
 extern int picked;
+
+void font_drawTextc(font_t *font, const char *text, int x, int y) {
+	font_drawText(font, text, x - (strlen(text) * font->ch_width / 2), y - font->ch_height / 2);
+}
 
 void font_drawText(font_t *font, const char *text, int x, int y) {
 	unsigned int i, len;
 
 	glBindTexture(GL_TEXTURE_2D, font->texname);
-	glPushMatrix();
+
 	glLoadIdentity();
 	glTranslatef((float)x, (float)-y, 0);
 	glScalef((float)font->ch_width, (float)font->ch_height, 1.0f);
@@ -124,12 +128,8 @@ void font_drawText(font_t *font, const char *text, int x, int y) {
 
 	glVertexPointer(2, GL_FLOAT, 0, quad);
 	for(i = 0, len = strlen(text); i < len; ++i) {
-		glTranslatef(0.5f, 0, 0);
+		glTranslatef(1, 0, 0);
 		glTexCoordPointer(2, GL_FLOAT, 0, font->texcoords + (text[i] - font->start) * 8);
 		glDrawArrays(GL_QUADS, 0, 4);
 	}
-	
-
-	glPopMatrix();
-
 }
