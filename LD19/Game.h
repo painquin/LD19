@@ -38,12 +38,18 @@ typedef struct game_s game_t;
 
 struct game_s
 {
-	int state;
 	/* Game Data */
+	int Population;
+	int Year;
 
+	int Change;
+	int Peace;
+	int Order;
+	int Wealth;
+	int Growth;
 
 	/* Meta Data */
-
+	int state;
 };
 
 extern game_t game;

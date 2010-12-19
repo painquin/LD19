@@ -35,7 +35,7 @@ THE SOFTWARE.
 
 #include "IMGUI.h"
 
-game_t game;
+game_t game = { 20, -4000, 0, 0,0, 0, 1, 0 };
 
 
 font_t *font12, *font16, *font22, *font54;
@@ -87,11 +87,42 @@ float *skyV = NULL, *skyC = NULL;
 
 const float cv = 3.14f / 180.0f;
 double nextThink = 0.0;
-int score = 0;
-void UpdateGame() {
-	score += 1;
 
-	nextThink += 5.0;
+void UpdateGame() {
+
+	/* The game begins when fire is discovered. */
+	if (TechTree[Tech_Fire].discovered) {
+		if (game.Year < -2000)
+		{
+			game.Year += 50; // 4000bc .. 2000bc (40 turns)
+		}
+		else if (game.Year < 0)
+		{
+			game.Year += 25; // 2000bc .. 1AD (80 turns)
+		}
+		else if (game.Year < 1000)
+		{
+			game.Year += 10; // 1AD .. 1000AD (100 turns)
+		}
+		else if (game.Year < 1900)
+		{
+			game.Year += 5; // 1000AD .. 1800AD (160 turns)
+		}
+		else 
+		{
+			game.Year += 1; // 1800AD .. ENDGAME (200+ turns)
+		}
+
+		if (game.Year == 0) game.Year = 1;
+		if (game.Year == 2100)
+		{
+			// endgame: asteroid impact destroys life on Earth
+		}
+	}
+
+
+
+	nextThink += 1.0;
 }
 
 void DrawGame()
@@ -182,7 +213,14 @@ void DrawGame()
 		}
 		xpos = -gl_Width / 2 + 15;
 		ypos += 64;
-		sprintf(buf, "Score: %i", score);
+		if (game.Year < 0)
+		{
+			sprintf(buf, "%iBC", -game.Year);
+		}
+		else
+		{
+			sprintf(buf, "%iAD", game.Year);
+		}
 		font_drawText(font22, buf, xpos, ypos);
 	}
 }

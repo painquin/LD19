@@ -38,7 +38,7 @@ void tech_create(tech_id_t id, const char *name, const char *desc, size_t prereq
 	TechTree[id].description = desc;
 	TechTree[id].prereq_count = prereq_count;
 	TechTree[id].discovered = 0;
-	TechTree[id].prereqs = (int *)calloc(TechTree[id].prereq_count, sizeof(int));
+	TechTree[id].prereqs = (tech_id_t *)calloc(TechTree[id].prereq_count, sizeof(tech_id_t));
 	
 	TechTree[id].cost = cost;
 

@@ -96,7 +96,7 @@ struct tech_s {
 	int id;
 
 	int prereq_count;
-	int *prereqs;
+	tech_id_t *prereqs;
 
 	int discovered;
 
