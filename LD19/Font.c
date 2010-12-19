@@ -24,6 +24,8 @@ THE SOFTWARE.
 #include <gl/GL.h>
 #include <gl/glfw.h>
 
+#include <string.h>
+
 #include "Font.h"
 
 font_t *font_load(const char *path, int flags, char start, char end, int width)
@@ -110,26 +112,91 @@ float quad[] = {
 
 extern int picked;
 
-void font_drawTextc(font_t *font, const char *text, int x, int y) {
-	font_drawText(font, text, x - (strlen(text) * font->ch_width / 2), y - font->ch_height / 2);
-}
-
-void font_drawText(font_t *font, const char *text, int x, int y) {
-	unsigned int i, len;
-
+void font_setupTextmode(font_t *font)
+{
 	glBindTexture(GL_TEXTURE_2D, font->texname);
 	glEnable(GL_TEXTURE_2D);
-	glLoadIdentity();
-	glTranslatef((float)x, (float)-y, 0);
-	glScalef((float)font->ch_width, (float)font->ch_height, 1.0f);
-	
+
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	glEnableClientState(GL_VERTEX_ARRAY);
 
 	glVertexPointer(2, GL_FLOAT, 0, quad);
-	for(i = 0, len = strlen(text); i < len; ++i) {
-		glTranslatef(1, 0, 0);
+
+}
+
+
+const char *font_drawSingleLine(font_t *font, const char *text)
+{
+	size_t i;
+	for(i = 0; text[i] != 0 && text[i] != '\n'; ++i) {
 		glTexCoordPointer(2, GL_FLOAT, 0, font->texcoords + (text[i] - font->start) * 8);
 		glDrawArrays(GL_QUADS, 0, 4);
+		glTranslatef(1, 0, 0);
 	}
+	if (text[i] == 0) return NULL;
+	return text + i + 1;
 }
+
+int font_drawTextc(font_t *font, const char *text, int x, int y) {
+	int lines = 1;
+	const char *c = text, *n;
+	int len;
+	font_setupTextmode(font);
+	
+	glLoadIdentity();
+	glPushMatrix();
+	
+	n = strchr(text, '\n');
+	if (n)
+		len = n - text - 1;
+	else
+		len = strlen(text);
+
+	glTranslatef((float)(x - (len * font->ch_width / 2)), (float)-y, 0);
+	glScalef((float)font->ch_width, (float)font->ch_height, 1.0f);
+
+	while(text = font_drawSingleLine(font, text)) {
+		glPopMatrix();
+		y += font->ch_height;
+		++lines;
+		glPushMatrix();
+		n = strchr(text, '\n');
+		
+		if (n)
+			len = n - text - 1;
+		else
+			len = strlen(text);
+		
+		glTranslatef((float)(x - (len * font->ch_width / 2)), (float)-y, 0);
+		glScalef((float)font->ch_width, (float)font->ch_height, 1.0f);
+
+	}
+
+	glPopMatrix();
+	return lines * font->ch_height;
+
+}
+
+int font_drawText(font_t *font, const char *text, int x, int y) {
+	int lines = 1;
+	font_setupTextmode(font);
+
+	glLoadIdentity();
+	glPushMatrix();
+	glTranslatef((float)x, (float)-y, 0);
+	glScalef((float)font->ch_width, (float)font->ch_height, 1.0f);
+	
+	while(text = font_drawSingleLine(font, text)) 
+	{
+		glPopMatrix();
+		y += font->ch_height;
+		++lines;
+		glPushMatrix();
+		glTranslatef((float)x, (float)-y, 0);
+		glScalef((float)font->ch_width, (float)font->ch_height, 1.0f);
+	}
+
+	glPopMatrix();
+	return lines * font->ch_height;
+}
+

@@ -33,6 +33,10 @@ static int hotitem;
 static int activeitem;
 static int mousedown;
 
+int imgui_hotitem() {
+	return hotitem;
+}
+
 GLuint button_tileset;
 
 static float square_quad[] =

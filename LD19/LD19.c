@@ -26,6 +26,7 @@ THE SOFTWARE.
 #include <gl/glfw.h>
 #include <math.h>
 #include <stdio.h>
+#include <string.h>
 
 
 #include "LD19.h"
@@ -35,7 +36,7 @@ THE SOFTWARE.
 
 #include "IMGUI.h"
 
-game_t game = { 20, -4000, 0, 0,0, 0, 1, 0 };
+game_t game;
 
 
 font_t *font12, *font16, *font22, *font54;
@@ -60,14 +61,33 @@ void GLResize(int w, int h) {
 	glLoadIdentity();
 }
 
-int picked = -1;
+static const char *popupTitle = "Popup";
+static const char *popupText;
+static game_state_t oldState;
+
+void ShowPopup(const char *title, const char *text)
+{
+	popupTitle = title;
+	popupText = text;
+	oldState = game.state;
+	game.state = GS_POPUP;
+}
 
 void DrawMenu()
 {
-	font_drawTextc(font54, "City State: Inspired Destiny", -50, -280);
+	font_drawTextc(font54, "City State: Inspired Destiny", 0, -280);
 	if (imgui_text(font22, "Begin", -200, -200, GEN_ID))
 	{
-		tech_init();
+		tech_init(); //= { 20, -4000, 0, 0,0, 0, 1, GS_MENU };
+		
+		game.Population = 20;
+		game.Year = -4000;
+		game.Change = 0;
+		game.Peace = 0;
+		game.Order = 0;
+		game.Wealth = 0;
+		game.Growth = 1;
+
 		game.state = GS_PLAYING;
 	}
 
@@ -87,6 +107,7 @@ float *skyV = NULL, *skyC = NULL;
 
 const float cv = 3.14f / 180.0f;
 double nextThink = 0.0;
+
 
 void UpdateGame() {
 
@@ -113,10 +134,12 @@ void UpdateGame() {
 			game.Year += 1; // 1800AD .. ENDGAME (200+ turns)
 		}
 
-		if (game.Year == 0) game.Year = 1;
 		if (game.Year == 2100)
 		{
-			// endgame: asteroid impact destroys life on Earth
+			game.state = GS_MENU;
+			ShowPopup("Destruction!",
+				"An asteroid has struck the Earth, wiping out all life."
+				);
 		}
 	}
 
@@ -127,6 +150,7 @@ void UpdateGame() {
 
 void DrawGame()
 {
+	const char *hoverText = "";
 	/* background bit */
 	if (skyV == NULL)
 	{
@@ -186,10 +210,12 @@ void DrawGame()
 
 	/* draw the list of techs that we can currently unlock */
 	{
-		int i, j;
+		int i, j, k;
 		int xpos = -gl_Width / 2 + 15;
 		int ypos = 15;
 		char buf[128];
+
+		ypos += font_drawText(font16, "Inspire great minds to discover advanced technology.", xpos, ypos);
 
 		for(i = 0; i < Tech_MAX; ++i)
 		{
@@ -204,58 +230,118 @@ void DrawGame()
 
 			/* only if the loop completed w/o break */
 			if (j == TechTree[i].prereq_count) {
-				if (imgui_button(TECH_OFFSET + i, xpos, ypos, GEN_ID-i)) {
+				if (imgui_button(TECH_OFFSET + i, xpos, ypos, k = (GEN_ID-i))) {
 					TechTree[i].discovered = 1;
+					if (i == Tech_InterstellarFlight) {
+						game.state = GS_MENU;
+						ShowPopup("Interstellar Flight",
+							"The true story of your people may finally begin.\n\n"
+
+							"The sky calls to us\n"
+							"If we do not destroy ourselves\n"
+							"We will one day venture to the stars\n\n"
+
+							"A still more glorious dawn awaits\n"
+							"Not a sunrise, but a galaxy rise\n"
+							"A morning filled with 400 billion suns\n"
+							"The rising of the milky way\n"
+							"\"A Glorious Dawn\" - Symphony of Science\n"
+							"This entry is dedicated to the memory of Dr Carl Sagan"
+							);
+					}
 					break;
+				}
+				else if (imgui_hotitem() == k)
+				{
+					hoverText = TechTree[i].name;
 				}
 				xpos += 70;
 			}
 		}
 		xpos = -gl_Width / 2 + 15;
-		ypos += 64;
+		ypos += 75;
+
+		ypos += font_drawText(font16, hoverText, xpos, ypos);
+
 		if (game.Year < 0)
 		{
 			sprintf(buf, "%iBC", -game.Year);
+		}
+		else if (game.Year == 0)
+		{
+			sprintf(buf, "1AD");
 		}
 		else
 		{
 			sprintf(buf, "%iAD", game.Year);
 		}
-		font_drawText(font22, buf, xpos, ypos);
+		font_drawText(font22, buf,xpos, ypos);
 	}
 }
 
-static char *about_lines[] =
-{
-	"You are the guiding spirit behind an early tribe as",
-	"the develop their land and discover new sciences.",
-	"Influencing them through inspiration, you will",
-	"spark their great minds to leadership, invention",
-	"and discovery. As you unlock the technology tree,",
-	"you will watch as your people survive, advance, and",
-	"thrive. Many harsh dangers await; can you bring them",
-	"to a still more glorious dawn?",
-	0
-};
+static const char *about_lines =
+	"You are the guiding spirit behind an early tribe as\n"
+	"they develop their land and discover new sciences.\n"
+	"Influencing them through inspiration, you will\n"
+	"spark their great minds to leadership, invention\n"
+	"and discovery. As you unlock the technology tree,\n"
+	"you will watch as your people survive, advance, and\n"
+	"thrive. Many harsh dangers await; can you bring them\n"
+	"to a still more glorious dawn?"
+	;
 
 
 void DrawAbout()
 {
-	int ypos = -280;
-	char **c;
-	font_drawTextc(font54, "About City State", -50, ypos);
-	ypos += font54->ch_height + 10;
+	int ypos = -290;
+	ypos += font_drawTextc(font54, "About City State", 0, ypos);
+	ypos += 10;
 
-	for(c = about_lines; *c; ++c) {
-		font_drawTextc(font22, *c, 0, ypos);
-		ypos += font22->ch_height;
-	}
-
-	if(imgui_text(font22, "Back", -20, ypos, GEN_ID)) {
+	ypos += font_drawTextc(font22, about_lines, 0, ypos);
+	
+	if(imgui_text(font22, "Back", -20, ypos + 20, GEN_ID)) {
 		game.state = GS_MENU;
 	}
 }
 
+
+void DrawPopup()
+{
+	int ypos = - gl_Height / 2 + 40;
+
+	glLoadIdentity();
+	glEnable(GL_COLOR);
+	glDisable(GL_TEXTURE_2D);
+	/* this is on top of the game screen */
+	glBegin(GL_QUADS);
+	glColor3f(0.0f, 0.0f, 0.0f);
+	glVertex2i(-gl_Width / 2 + 20, gl_Height / 2-20);
+	glVertex2i(-gl_Width / 2 + 20, -gl_Height / 2 + 20);
+	glVertex2i(gl_Width / 2 - 20, -gl_Height / 2 + 20);
+	glVertex2i(gl_Width / 2 - 20, gl_Height / 2-20);
+	glVertex2i(-gl_Width / 2 + 20, gl_Height / 2 -20);
+	glEnd();
+
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glBegin(GL_LINE_STRIP);
+	glVertex2i(-gl_Width / 2 + 25, gl_Height / 2-25);
+	glVertex2i(-gl_Width / 2 + 25, -gl_Height / 2 + 25);
+	glVertex2i(gl_Width / 2 - 25, -gl_Height / 2 + 25);
+	glVertex2i(gl_Width / 2 - 25, gl_Height / 2-25);
+	glVertex2i(-gl_Width / 2 + 25, gl_Height / 2-25);
+	glEnd();
+
+
+	ypos += font_drawTextc(font54, popupTitle, 0, ypos);
+
+	ypos += font_drawTextc(font22, popupText, 0, ypos);
+
+	if (imgui_text(font22, "Back", -20, ypos + 20, GEN_ID)) {
+		game.state = oldState;
+		nextThink = glfwGetTime() + 1.0;
+	}
+
+}
 
 int main(int argc, char* argv[])
 {
@@ -305,13 +391,17 @@ int main(int argc, char* argv[])
 		case GS_PLAYING:
 			DrawGame();
 			break;
+		case GS_POPUP:
+			DrawGame();
+			DrawPopup();
+			break;
 		}
 
 		imgui_finish();
 
 		glfwSwapBuffers();
 
-		if (glfwGetTime() > nextThink)
+		if (game.state == GS_PLAYING && glfwGetTime() > nextThink)
 			UpdateGame();
 
 		running = !glfwGetKey( GLFW_KEY_ESC) &&

@@ -32,7 +32,7 @@ typedef enum
 	GS_ABOUT,
 
 	GS_MAX
-};
+} game_state_t;
 
 typedef struct game_s game_t;
 
@@ -49,7 +49,7 @@ struct game_s
 	int Growth;
 
 	/* Meta Data */
-	int state;
+	game_state_t state;
 };
 
 extern game_t game;

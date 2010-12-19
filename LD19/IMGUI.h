@@ -36,3 +36,5 @@ void imgui_finish();
 
 int imgui_button(int tile, int x, int y, int _id);
 int imgui_text(font_t *font, const char *text, int x, int y, int _id);
+
+int imgui_hotitem();
