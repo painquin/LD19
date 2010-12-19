@@ -23,10 +23,21 @@ THE SOFTWARE.
 #pragma once
 
 
+typedef enum
+{
+	GS_NONE,
+	GS_MENU,
+	GS_PLAYING,
+	GS_POPUP,
+	GS_ABOUT,
+
+	GS_MAX
+};
+
 typedef struct game_s game_t;
 
-
-struct game_s {
+struct game_s
+{
 	int state;
 	/* Game Data */
 

@@ -27,28 +27,27 @@ THE SOFTWARE.
 #include "LD19.h"
 #include "Tech.h"
 
+static tech_t tfire = { "Fire",    "Fire is the key to advancement. Get those monkeys moving!", Tech_Fire, 0, 0, 0 };
 
+tech_t *TechTree = NULL;
 
-tech_t TechTree[] =
+void tech_create(int id, const char *name, const char *desc, size_t prereq_count)
 {
-	{ "NONE", "Untech", Tech_None, 0, 0 },
-	{ "Fire",    "Fire is the key to advancement. Get those monkeys moving!", Tech_Fire, 0, 0 },
-	{ "Mining",  "Cut up rocks.", Tech_Mining, 1, 0 },
-	{ "Hunting", "Cut up animals.", Tech_Hunting, 1, 0 },
-	{ "Farming", "Cut up plants.", Tech_Farming, 1, 0 }
-};
-
-void init_single_tech(int id)
-{
+	TechTree[id].name = name;
+	TechTree[id].description = desc;
+	TechTree[id].prereq_count = prereq_count;
+	TechTree[id].discovered = 0;
 	TechTree[id].prereqs = (int *)calloc(TechTree[id].prereq_count, sizeof(int));
 }
 
-void initialize_techs()
+void tech_init()
 {
-	int i;
-	for(i = Tech_Fire; i < Tech_MAX; ++i) {
-		init_single_tech(i);
-	}
+	TechTree = (tech_t *)calloc(Tech_MAX, sizeof(tech_t));
+
+	tech_create(Tech_Fire, "Fire", "Fire is the key to advancement. Get those monkeys moving!", 0);
+	tech_create(Tech_Mining, "Mining", "Cut up rocks.", 1);
+	tech_create(Tech_Hunting, "Hunting", "Cut up animals.", 1);
+	tech_create(Tech_Farming, "Farming", "Cut up plants.", 1);
 
 	TechTree[Tech_Mining].prereqs[0] = Tech_Fire;
 	TechTree[Tech_Hunting].prereqs[0] = Tech_Fire;

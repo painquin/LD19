@@ -118,7 +118,7 @@ void font_drawText(font_t *font, const char *text, int x, int y) {
 	unsigned int i, len;
 
 	glBindTexture(GL_TEXTURE_2D, font->texname);
-
+	glEnable(GL_TEXTURE_2D);
 	glLoadIdentity();
 	glTranslatef((float)x, (float)-y, 0);
 	glScalef((float)font->ch_width, (float)font->ch_height, 1.0f);

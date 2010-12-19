@@ -23,8 +23,7 @@ THE SOFTWARE.
 
 
 typedef enum {
-	Tech_None = 0,
-	Tech_Fire = 1,
+	Tech_Fire = 0,
 
 	Tech_Mining,
 	Tech_Hunting,
@@ -33,16 +32,24 @@ typedef enum {
 	Tech_MAX,
 } tech_id_t;
 
+/* where in the tileset do techs start */
+#define TECH_OFFSET 1
+
 typedef struct tech_s tech_t;
 
 struct tech_s {
-	char *name;
-	char *description;
+	const char *name;
+	const char *description;
 
 	int id;
 
 	int prereq_count;
 	int *prereqs;
+
+	int discovered;
 };
 
-void initialize_techs();
+extern tech_t *TechTree;
+
+void tech_init();
+
