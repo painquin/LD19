@@ -93,12 +93,14 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Disaster.c" />
     <ClCompile Include="Font.c" />
     <ClCompile Include="IMGUI.c" />
     <ClCompile Include="LD19.c" />
     <ClCompile Include="Tech.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Disaster.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="IMGUI.h" />

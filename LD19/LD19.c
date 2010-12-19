@@ -27,13 +27,15 @@ THE SOFTWARE.
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <time.h>
 
 
 #include "LD19.h"
 #include "Game.h"
 #include "Tech.h"
 #include "Font.h"
-
+#include "Disaster.h"
 #include "IMGUI.h"
 
 game_t game;
@@ -109,6 +111,7 @@ float *skyV = NULL, *skyC = NULL;
 const float cv = 3.14f / 180.0f;
 double nextThink = 0.0;
 
+int nextDisaster = -3950;
 
 void UpdateGame() {
 
@@ -144,6 +147,17 @@ void UpdateGame() {
 				"of life and spread to other worlds..."
 				);
 		}
+
+		if (rand() % 100 > 15)
+		{
+			int disaster_id = rand() % disaster_count;
+			if (disaster_table[disaster_id].condition()) {
+				game.state = GS_MENU;
+				ShowPopup(disaster_table[disaster_id].title,
+					disaster_table[disaster_id].description);
+			}
+		}
+
 
 
 		game.Inspiration += 1 + game.Change / 25;
@@ -293,6 +307,11 @@ void DrawGame()
 
 		ypos += font_drawText(font16, buf, xpos, ypos);
 
+		ypos += 20;
+
+		sprintf_s(buf, 256, "Change: %i\nPeace: %i\nOrder: %i\nWealth: %i\nGrowth: %i",
+			game.Change, game.Peace, game.Order, game.Wealth, game.Growth);
+		ypos += font_drawText(font16, buf, xpos, ypos);
 
 
 		if (game.Year < 0)
@@ -381,6 +400,8 @@ int main(int argc, char* argv[])
 	int running = 1;
 	
 	game.state = GS_MENU;
+	
+	srand((unsigned int)time(NULL));
 
 	if (!glfwInit()) {
 		return -1;

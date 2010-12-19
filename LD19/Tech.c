@@ -80,7 +80,7 @@ void tech_init()
 	tech_create(Tech_Hunting, "Hunting", "Cut up animals.", 1, 10, 3, -4, 3, 1, 1);
 	tech_add_prereq(Tech_Fire);
 
-	tech_create(Tech_Farming, "Farming", "Cut up plants.", 1, 10, 8, 1, 4, 2, 3);
+	tech_create(Tech_Farming, "Farming", "Cut up plants.", 1, 10, 8, 1, 4, 2, 5);
 	tech_add_prereq( Tech_Fire);
 
 	tech_create(Tech_AnimalHusbandry, "Animal Husbandry", "Keeping your animals healthy.", 2, 15, 10, 5, 3, 5, 3);

@@ -30,6 +30,9 @@
     <ClCompile Include="IMGUI.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Disaster.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tech.h">
@@ -45,6 +48,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IMGUI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Disaster.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
