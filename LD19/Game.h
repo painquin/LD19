@@ -41,6 +41,7 @@ struct game_s
 	/* Game Data */
 	int Population;
 	int Year;
+	int Inspiration;
 
 	int Change;
 	int Peace;

@@ -23,6 +23,8 @@ THE SOFTWARE.
 #include <Windows.h>
 #include <gl/GL.h>
 #include <gl/glfw.h>
+#include <stdio.h>
+#include <malloc.h>
 
 #include "LD19.h"
 #include "Tech.h"
@@ -34,6 +36,8 @@ static size_t idx;
 
 void tech_create(tech_id_t id, const char *name, const char *desc, size_t prereq_count, int cost, int Order, int Peace, int Change, int Wealth, int Growth)
 {
+	//printf("Adding tech %s (%i) %i prereqs\n", name, id, prereq_count);
+
 	TechTree[id].name = name;
 	TechTree[id].description = desc;
 	TechTree[id].prereq_count = prereq_count;
@@ -54,20 +58,29 @@ void tech_create(tech_id_t id, const char *name, const char *desc, size_t prereq
 
 void tech_add_prereq(tech_id_t prereq)
 {
+	//printf("  Adding prereq %s (%i)\n", TechTree[prereq].name, prereq);
 	TechTree[last_id].prereqs[idx++] = prereq;
 }
 
 void tech_init()
 {
+	//printf("Allocating tech tree...\n");
 	TechTree = (tech_t *)calloc(Tech_MAX, sizeof(tech_t));
+	if (TechTree == NULL) {
+		//printf("calloc failed %ix%i\n", Tech_MAX, sizeof(tech_t));
+		exit(-1);
+	}
+	//printf("Allocated.\n");
 
-	tech_create(Tech_Fire, "Fire", "Fire is the key to advancement. Get those monkeys moving!", 0, 0, 0, 0, 5, 0, 5);
+	tech_create(Tech_Fire, "Fire", "Fire is the key to advancement. Get those monkeys moving!", 0, 1, 0, 0, 5, 0, 5);
+
 	tech_create(Tech_Mining, "Mining", "Cut up rocks.", 1, 10, 5, 3, 5, 5, 0);
-	tech_create(Tech_Hunting, "Hunting", "Cut up animals.", 1, 10, 3, -4, 3, 1, 1);
-	tech_create(Tech_Farming, "Farming", "Cut up plants.", 1, 10, 8, 1, 4, 2, 3);
+	tech_add_prereq(Tech_Fire);
 
+	tech_create(Tech_Hunting, "Hunting", "Cut up animals.", 1, 10, 3, -4, 3, 1, 1);
 	tech_add_prereq(Tech_Fire);
-	tech_add_prereq(Tech_Fire);
+
+	tech_create(Tech_Farming, "Farming", "Cut up plants.", 1, 10, 8, 1, 4, 2, 3);
 	tech_add_prereq( Tech_Fire);
 
 	tech_create(Tech_AnimalHusbandry, "Animal Husbandry", "Keeping your animals healthy.", 2, 15, 10, 5, 3, 5, 3);

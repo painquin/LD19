@@ -39,7 +39,7 @@ THE SOFTWARE.
 game_t game;
 
 
-font_t *font12, *font16, *font22, *font54;
+font_t *font16, *font22, *font54;
 
 int gl_Width, gl_Height;
 
@@ -87,6 +87,7 @@ void DrawMenu()
 		game.Order = 0;
 		game.Wealth = 0;
 		game.Growth = 1;
+		game.Inspiration = 1;
 
 		game.state = GS_PLAYING;
 	}
@@ -138,9 +139,15 @@ void UpdateGame() {
 		{
 			game.state = GS_MENU;
 			ShowPopup("Destruction!",
-				"An asteroid has struck the Earth, wiping out all life."
+				"An asteroid strikes the Earth, wiping out all life.\n"
+				"If you only you had found a way to leave your island\n"
+				"of life and spread to other worlds..."
 				);
 		}
+
+
+		game.Inspiration += 1 + game.Change / 25;
+
 	}
 
 
@@ -150,7 +157,7 @@ void UpdateGame() {
 
 void DrawGame()
 {
-	const char *hoverText = "";
+	int hoverID = -1;
 	/* background bit */
 	if (skyV == NULL)
 	{
@@ -213,9 +220,9 @@ void DrawGame()
 		int i, j, k;
 		int xpos = -gl_Width / 2 + 15;
 		int ypos = 15;
-		char buf[128];
-
-		ypos += font_drawText(font16, "Inspire great minds to discover advanced technology.", xpos, ypos);
+		char buf[256];
+		sprintf_s(buf, 256, "Inspire great minds to discover advanced technology. Inspiration: %i", game.Inspiration);
+		ypos += font_drawText(font16, buf, xpos, ypos);
 
 		for(i = 0; i < Tech_MAX; ++i)
 		{
@@ -231,51 +238,77 @@ void DrawGame()
 			/* only if the loop completed w/o break */
 			if (j == TechTree[i].prereq_count) {
 				if (imgui_button(TECH_OFFSET + i, xpos, ypos, k = (GEN_ID-i))) {
-					TechTree[i].discovered = 1;
-					if (i == Tech_InterstellarFlight) {
-						game.state = GS_MENU;
-						ShowPopup("Interstellar Flight",
-							"The true story of your people may finally begin.\n\n"
+					if (game.Inspiration >= TechTree[i].cost) {
+						game.Inspiration -= TechTree[i].cost;
+						
+						game.Order += TechTree[i].Order;
+						game.Peace += TechTree[i].Peace;
+						game.Growth += TechTree[i].Growth;
+						game.Wealth += TechTree[i].Wealth;
+						game.Change += TechTree[i].Change;
 
-							"The sky calls to us\n"
-							"If we do not destroy ourselves\n"
-							"We will one day venture to the stars\n\n"
+						TechTree[i].discovered = 1;
+						if (i == Tech_InterstellarFlight) {
+							game.state = GS_MENU;
+							ShowPopup("Interstellar Flight",
+								"The true story of your people may finally begin.\n\n"
 
-							"A still more glorious dawn awaits\n"
-							"Not a sunrise, but a galaxy rise\n"
-							"A morning filled with 400 billion suns\n"
-							"The rising of the milky way\n"
-							"\"A Glorious Dawn\" - Symphony of Science\n"
-							"This entry is dedicated to the memory of Dr Carl Sagan"
-							);
+								"The sky calls to us\n"
+								"If we do not destroy ourselves\n"
+								"We will one day venture to the stars\n\n"
+
+								"A still more glorious dawn awaits\n"
+								"Not a sunrise, but a galaxy rise\n"
+								"A morning filled with 400 billion suns\n"
+								"The rising of the milky way\n"
+								"\"A Glorious Dawn\" - Symphony of Science\n"
+								"This entry is dedicated to the memory of Dr Carl Sagan"
+								);
+						}
+						break;
 					}
-					break;
 				}
 				else if (imgui_hotitem() == k)
 				{
-					hoverText = TechTree[i].name;
+					hoverID = i;
 				}
 				xpos += 70;
 			}
 		}
 		xpos = -gl_Width / 2 + 15;
 		ypos += 75;
-
-		ypos += font_drawText(font16, hoverText, xpos, ypos);
-
-		if (game.Year < 0)
+		if (hoverID == -1)
 		{
-			sprintf(buf, "%iBC", -game.Year);
-		}
-		else if (game.Year == 0)
-		{
-			sprintf(buf, "1AD");
+			buf[0] = 0;
 		}
 		else
 		{
-			sprintf(buf, "%iAD", game.Year);
+			sprintf_s(buf, 256, 
+				"%s: %i/%i inspiration.",
+				TechTree[hoverID].name,
+				game.Inspiration,
+				TechTree[hoverID].cost
+				);
 		}
-		font_drawText(font22, buf,xpos, ypos);
+
+		ypos += font_drawText(font16, buf, xpos, ypos);
+
+
+
+		if (game.Year < 0)
+		{
+			sprintf_s(buf, 256,  "%iBC", -game.Year);
+		}
+		else if (game.Year == 0)
+		{
+			sprintf_s(buf, 256,  "1AD");
+		}
+		else
+		{
+			sprintf_s(buf, 256,  "%iAD", game.Year);
+		}
+
+		font_drawText(font22, buf, gl_Width / 2 - 100, -gl_Height / 2 + 5);
 	}
 }
 
@@ -361,10 +394,17 @@ int main(int argc, char* argv[])
 	glfwSetWindowSizeCallback(GLResize);
 	glfwSetWindowTitle("City State: Inspired Destiny");
 
-	font12 = font_load(FontPath "font_12.tga", 0, ' ', '~', 32);
-	font16 = font_load(FontPath "font_16.tga", 0, ' ', '~', 32);
-	font22 = font_load(FontPath "font_22.tga", 0, ' ', '~', 32);
-	font54 = font_load(FontPath "font_54.tga", 0, ' ', '~', 32);
+//	if (!(font12 = font_load(FontPath "font_12.tga", 0, ' ', '~', 32))) {
+		
+	if (!(font16 = font_load(FontPath "font_16.tga", 0, ' ', '~', 32))) {
+		printf("No font16\n");
+	}
+	if (!(font22 = font_load(FontPath "font_22.tga", 0, ' ', '~', 32))) {
+		printf("No font22\n");
+	}
+	if (!(font54 = font_load(FontPath "font_54.tga", 0, ' ', '~', 32))) {
+		printf("No font54\n");
+	}
 
 	imgui_init(TexturePath "tech/tech_tiles.tga", Tech_MAX + 1, 8);
 
@@ -408,7 +448,6 @@ int main(int argc, char* argv[])
 			glfwGetWindowParam(GLFW_OPENED );
 	}
 	
-	font_free(font12);
 	font_free(font16);
 	font_free(font22);
 	font_free(font54);
