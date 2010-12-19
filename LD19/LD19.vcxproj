@@ -55,7 +55,7 @@
       <CompileAs>CompileAsC</CompileAs>
       <OmitDefaultLibName>
       </OmitDefaultLibName>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
@@ -64,7 +64,7 @@
       <AdditionalDependencies>opengl32.lib;glu32.lib;glfw.lib;user32.lib</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
-      <IgnoreSpecificDefaultLibraries>MSVCRT</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMTD</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -97,7 +97,6 @@
     <ClCompile Include="IMGUI.c" />
     <ClCompile Include="LD19.c" />
     <ClCompile Include="Tech.c" />
-    <ClCompile Include="Textures.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Font.h" />

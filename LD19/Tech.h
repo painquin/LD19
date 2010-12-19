@@ -21,15 +21,67 @@ THE SOFTWARE.
 */
 #pragma once
 
-
 typedef enum {
-	Tech_Fire = 0,
-
+	Tech_Fire,
 	Tech_Mining,
 	Tech_Hunting,
 	Tech_Farming,
 
-	Tech_MAX,
+	Tech_AnimalHusbandry,
+	Tech_Mathematics,
+	Tech_Metalworking,
+	Tech_Writing,
+
+	Tech_Medicine,
+	Tech_Pottery,
+	Tech_Irrigation,
+	Tech_Glassmaking,
+
+	Tech_Literature,
+	Tech_Music,
+	Tech_Biology,
+	Tech_Paper,
+	Tech_Sailing,
+
+	Tech_Ecology,
+	Tech_Philosophy,
+	Tech_Chemistry,
+	Tech_Education,
+
+	Tech_Corporations,
+	Tech_Gunpowder,
+	Tech_OilRefining,
+	Tech_Electricity,
+
+	Tech_Physics,
+	Tech_Currency,
+	Tech_Astronomy,
+	Tech_Mechanics,
+
+	Tech_Banking,
+	Tech_Lasers,
+	Tech_AtomicPower,
+	Tech_Combustion,
+
+	Tech_Rocketry,
+	Tech_Plastics,
+	Tech_Engineering,
+	Tech_SteamPower,
+
+	Tech_AssemblyLine,
+	Tech_PrintingPress,
+	Tech_Navigation,
+	Tech_Electronics,
+
+	Tech_Computers,
+	Tech_Robotics,
+	Tech_Flight,
+	Tech_Telecommunications,
+	
+	Tech_Economics,
+	Tech_InterstellarFlight,
+
+	Tech_MAX
 } tech_id_t;
 
 /* where in the tileset do techs start */
@@ -47,6 +99,16 @@ struct tech_s {
 	int *prereqs;
 
 	int discovered;
+
+	/* Amount of inspiration required to unlock */
+	int cost;
+	/* Influence on leanings */
+
+	int Order;
+	int Peace;
+	int Change;
+	int Wealth;
+	int Growth;
 };
 
 extern tech_t *TechTree;

@@ -242,7 +242,7 @@ int main(int argc, char* argv[])
 	font22 = font_load(FontPath "font_22.tga", 0, ' ', '~', 32);
 	font54 = font_load(FontPath "font_54.tga", 0, ' ', '~', 32);
 
-	imgui_init(TexturePath "tech/tech_tiles.tga", 5, 8);
+	imgui_init(TexturePath "tech/tech_tiles.tga", Tech_MAX + 1, 8);
 
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
@@ -280,7 +280,10 @@ int main(int argc, char* argv[])
 			glfwGetWindowParam(GLFW_OPENED );
 	}
 	
+	font_free(font12);
 	font_free(font16);
+	font_free(font22);
+	font_free(font54);
 
 	glfwTerminate();
 

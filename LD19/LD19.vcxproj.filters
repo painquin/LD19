@@ -27,9 +27,6 @@
     <ClCompile Include="Tech.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Textures.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="IMGUI.c">
       <Filter>Source Files</Filter>
     </ClCompile>
