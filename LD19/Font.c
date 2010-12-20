@@ -19,10 +19,15 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-#include <Windows.h>
+#ifdef WIN32
+#include <windows.h>
+#else
+#define sprintf_s snprintf
+#endif
+
 #include <malloc.h>
-#include <gl/GL.h>
-#include <gl/glfw.h>
+#include <GL/gl.h>
+#include <GL/glfw.h>
 
 #include <string.h>
 

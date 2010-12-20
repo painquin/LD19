@@ -21,7 +21,7 @@ THE SOFTWARE.
 */
 #pragma once
 
-#include <gl/GL.h>
+#include <GL/gl.h>
 
 typedef struct font_s font_t;
 
