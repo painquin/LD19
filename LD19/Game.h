@@ -49,6 +49,8 @@ struct game_s
 	int Wealth;
 	int Growth;
 
+	int CostToInspire;
+
 	/* Meta Data */
 	game_state_t state;
 };

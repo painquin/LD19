@@ -61,7 +61,7 @@ static int cond_sacked()
 static int cond_earthquake()
 {
 	/* A poor city won't have the infrastructure to survive an earthquake */
-	if (game.Wealth < 20 && game.Population > 100)
+	if (game.Wealth < 20 && game.Population > 500)
 		return 1;
 
 	return 0;
@@ -69,7 +69,7 @@ static int cond_earthquake()
 
 static int cond_nuclear()
 {
-	if (TechTree[Tech_AtomicPower].discovered && game.Peace < -20)
+	if (TechTree[Tech_AtomicPower].discovered && game.Peace < -30)
 		return 1;
 
 	return 0;
@@ -77,7 +77,7 @@ static int cond_nuclear()
 
 static int cond_robots()
 {
-	/* Robots built for war taking over the world :o */
+	/* Robots taking over the world :o */
 	if(TechTree[Tech_Robotics].discovered && game.Order < 60)
 		return 1;
 	

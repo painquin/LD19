@@ -90,6 +90,7 @@ void DrawMenu()
 		game.Wealth = 0;
 		game.Growth = 1;
 		game.Inspiration = 1;
+		game.CostToInspire = 10;
 
 		game.state = GS_PLAYING;
 	}
@@ -117,21 +118,17 @@ void UpdateGame() {
 
 	/* The game begins when fire is discovered. */
 	if (TechTree[Tech_Fire].discovered) {
-		if (game.Year < -2000)
+		if (game.Year < -1000)
 		{
-			game.Year += 50; // 4000bc .. 2000bc (40 turns)
-		}
-		else if (game.Year < 0)
-		{
-			game.Year += 25; // 2000bc .. 1AD (80 turns)
+			game.Year += 50; // 4000BC .. 1000BC (60 turns)
 		}
 		else if (game.Year < 1000)
 		{
-			game.Year += 10; // 1AD .. 1000AD (100 turns)
+			game.Year += 25; // 1000BC .. 1000AD (80 turns)
 		}
-		else if (game.Year < 1900)
+		else if (game.Year < 1800)
 		{
-			game.Year += 5; // 1000AD .. 1800AD (160 turns)
+			game.Year += 10; // 1000AD .. 1800AD (80 turns)
 		}
 		else 
 		{
@@ -160,7 +157,8 @@ void UpdateGame() {
 
 
 
-		game.Inspiration += 1 + game.Change / 25;
+		game.Population += game.Growth / 5;
+		game.Inspiration += game.Change / 35 + game.Population / 100 + 1;
 
 	}
 
@@ -168,6 +166,7 @@ void UpdateGame() {
 
 	nextThink += 1.0;
 }
+GLuint city_tile;
 
 void DrawGame()
 {
@@ -228,13 +227,29 @@ void DrawGame()
 	glVertex2i(-gl_Width / 2 + 10, -10);
 	glEnd();
 
+	/* draw the city */
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, city_tile);
+	glBegin(GL_QUADS);
+	glTexCoord2i(0, 0);
+	glVertex2i(-160, 0);
+	glTexCoord2i(0, 1);
+	glVertex2i(-160, 256);
+	glTexCoord2i(1, 1);
+	glVertex2i(160, 256);
+	glTexCoord2i(1, 0);
+	glVertex2i(160, 0);
+	glEnd();
+
 
 	/* draw the list of techs that we can currently unlock */
 	{
 		int i, j, k;
 		int xpos = -gl_Width / 2 + 15;
 		int ypos = 15;
+
 		char buf[256];
+
 		sprintf_s(buf, 256, "Inspire great minds to discover advanced technology. Inspiration: %i", game.Inspiration);
 		ypos += font_drawText(font16, buf, xpos, ypos);
 
@@ -276,7 +291,7 @@ void DrawGame()
 								"A morning filled with 400 billion suns\n"
 								"The rising of the milky way\n"
 								"\"A Glorious Dawn\" - Symphony of Science\n"
-								"This entry is dedicated to the memory of Dr Carl Sagan"
+								"This entry is dedicated to the memory of Dr. Carl Sagan"
 								);
 						}
 						break;
@@ -309,9 +324,69 @@ void DrawGame()
 
 		ypos += 20;
 
-		sprintf_s(buf, 256, "Change: %i\nPeace: %i\nOrder: %i\nWealth: %i\nGrowth: %i",
-			game.Change, game.Peace, game.Order, game.Wealth, game.Growth);
-		ypos += font_drawText(font16, buf, xpos, ypos);
+		sprintf_s(buf, 256, "Population: %i\nChange: %i\nPeace: %i\nOrder: %i\nWealth: %i\nGrowth: %i",
+			game.Population, game.Change, game.Peace, game.Order, game.Wealth, game.Growth);
+		font_drawText(font16, buf, xpos, ypos);
+
+		xpos = 0;
+		sprintf_s(buf, 256, "Inspire Peace (%i)", game.CostToInspire);
+		if (imgui_text(font16, buf, xpos, ypos, GEN_ID))
+		{
+			if (game.CostToInspire <= game.Inspiration)
+			{
+				game.Peace += 10;
+				game.Inspiration -= game.CostToInspire;
+				game.CostToInspire *= 1.2f;
+			}
+		}
+		ypos += font16->ch_height;
+
+		sprintf_s(buf, 256, "Inspire Defense (%i)", game.CostToInspire);
+		if (imgui_text(font16, buf, xpos, ypos, GEN_ID))
+		{
+			if (game.CostToInspire <= game.Inspiration)
+			{
+				game.Peace -= 10;
+				game.Inspiration -= game.CostToInspire;
+				game.CostToInspire *= 1.2f;
+			}
+		}
+		ypos += font16->ch_height;
+		sprintf_s(buf, 256, "Inspire Economy (%i)", game.CostToInspire);
+		if (imgui_text(font16, buf, xpos, ypos, GEN_ID))
+		{
+			if (game.CostToInspire <= game.Inspiration)
+			{
+				game.Wealth += 10;
+				game.Inspiration -= game.CostToInspire;
+				game.CostToInspire *= 1.2f;
+			}
+		}
+		ypos += font16->ch_height;
+		sprintf_s(buf, 256, "Inspire Order (%i)", game.CostToInspire);
+		if (imgui_text(font16, buf, xpos, ypos, GEN_ID))
+		{
+			if (game.CostToInspire <= game.Inspiration)
+			{
+				game.Order += 10;
+				game.Inspiration -= game.CostToInspire;
+				game.CostToInspire *= 1.2f;
+			}
+		}
+		ypos += font16->ch_height;
+		sprintf_s(buf, 256, "Inspire Growth (%i)", game.CostToInspire);
+		if (imgui_text(font16, buf, xpos, ypos, GEN_ID))
+		{
+			if (game.CostToInspire <= game.Inspiration)
+			{
+				game.Growth += 10;
+				game.Inspiration -= game.CostToInspire;
+				game.CostToInspire *= 1.2f;
+			}
+		}
+		ypos += font16->ch_height;
+
+		
 
 
 		if (game.Year < 0)
@@ -412,11 +487,18 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
+	glGenTextures(1, &city_tile);
+	glBindTexture(GL_TEXTURE_2D, city_tile);
+	glfwLoadTexture2D(TexturePath "city.tga", 0);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+
+
 	glfwSetWindowSizeCallback(GLResize);
 	glfwSetWindowTitle("City State: Inspired Destiny");
 
-//	if (!(font12 = font_load(FontPath "font_12.tga", 0, ' ', '~', 32))) {
-		
 	if (!(font16 = font_load(FontPath "font_16.tga", 0, ' ', '~', 32))) {
 		printf("No font16\n");
 	}
