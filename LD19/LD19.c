@@ -584,6 +584,8 @@ int main(int argc, char* argv[])
 
 		running = !glfwGetKey( GLFW_KEY_ESC) &&
 			glfwGetWindowParam(GLFW_OPENED );
+
+		glfwSleep(0.001);
 	}
 	
 	font_free(font16);
