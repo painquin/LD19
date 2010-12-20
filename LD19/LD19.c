@@ -334,7 +334,14 @@ void DrawGame()
 		{
 			if (game.CostToInspire <= game.Inspiration)
 			{
-				game.Peace += 10;
+				if (game.Peace < 0)
+				{
+					game.Peace += 20;
+				}
+				else
+				{
+					game.Peace += 10;
+				}
 				game.Inspiration -= game.CostToInspire;
 				game.CostToInspire *= 1.2f;
 			}
@@ -345,7 +352,14 @@ void DrawGame()
 		if (imgui_text(font16, buf, xpos, ypos, GEN_ID))
 		{
 			if (game.CostToInspire <= game.Inspiration)
-			{
+			{if (game.Peace < 0)
+				{
+					game.Peace -= 20;
+				}
+				else
+				{
+					game.Peace -= 10;
+				}
 				game.Peace -= 10;
 				game.Inspiration -= game.CostToInspire;
 				game.CostToInspire *= 1.2f;
@@ -357,7 +371,14 @@ void DrawGame()
 		{
 			if (game.CostToInspire <= game.Inspiration)
 			{
-				game.Wealth += 10;
+				if (game.Wealth < 0)
+				{
+					game.Wealth += 20;
+				}
+				else
+				{
+					game.Wealth += 10;
+				}
 				game.Inspiration -= game.CostToInspire;
 				game.CostToInspire *= 1.2f;
 			}
@@ -368,7 +389,14 @@ void DrawGame()
 		{
 			if (game.CostToInspire <= game.Inspiration)
 			{
-				game.Order += 10;
+				if (game.Growth < 0)
+				{
+					game.Growth += 20;
+				}
+				else
+				{
+					game.Growth += 10;
+				}
 				game.Inspiration -= game.CostToInspire;
 				game.CostToInspire *= 1.2f;
 			}
@@ -379,7 +407,14 @@ void DrawGame()
 		{
 			if (game.CostToInspire <= game.Inspiration)
 			{
-				game.Growth += 10;
+				if (game.Growth < 0)
+				{
+					game.Growth += 20;
+				}
+				else
+				{
+					game.Growth += 10;
+				}
 				game.Inspiration -= game.CostToInspire;
 				game.CostToInspire *= 1.2f;
 			}

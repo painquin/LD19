@@ -44,6 +44,14 @@ static int cond_war()
 
 	if (game.Peace > 40)
 		return 1;
+
+	/* or if you don't have economics behind your army */
+	if (game.Year > -1000 && game.Wealth < 20 && game.Peace > 10)
+		return 1;
+
+	/* or if you simply haven't got enough people */
+	if (game.Year > -1500 && game.Population < 100)
+		return 1;
 	
 	return 0;
 }
